@@ -1,51 +1,56 @@
 # Pirañalab Pedidos
 
-Gestor personal de pedidos para un emprendimiento de impresión 3D. Está hecho con React, TypeScript y Vite. Guarda pedidos, clientes, imágenes e historial en `localStorage`; no usa servidor, base de datos, cuenta ni servicios externos.
+Gestor compartido para administrar pedidos de impresión 3D, clientes, cotizaciones, vencimientos e historial. Usa React, TypeScript, Vite y Supabase Auth, PostgreSQL y Storage privado. Las personas autorizadas consultan los mismos datos desde distintos dispositivos.
 
-## Importante sobre los datos
+## Requisitos y desarrollo local
 
-Los datos permanecen en el navegador y perfil donde los cargaste. No se sincronizan con otros dispositivos ni con otros navegadores. Borrar los datos del sitio, cambiar de perfil o usar otro dispositivo puede hacer que dejen de estar disponibles. En Configuración podés descargar e importar una copia JSON. Guardá los respaldos en un lugar seguro.
-
-Las imágenes de referencia también se guardan en el navegador y se limitan a 700 KB por imagen para cuidar el espacio disponible. GitHub Pages publica los archivos de la aplicación; nunca recibe tus pedidos.
-
-## Requisitos y uso local
-
-Necesitás Node.js 20 o posterior y npm.
+Requiere Node.js 20 o posterior y npm.
 
 ```sh
 npm install
+cp .env.example .env.local
+# Completar VITE_SUPABASE_ANON_KEY en .env.local
 npm run dev
 ```
 
-Abrí la dirección local que muestre Vite. No hay que crear variables de entorno ni configurar servicios.
+La URL de este proyecto Supabase ya está en `.env.example`. Copiá en `.env.local` la clave pública `anon` o `publishable` desde Supabase → Project Settings → API Keys. Nunca uses `service_role`/`secret` en el frontend ni la subas a GitHub.
+
+## Preparar Supabase
+
+1. Abrí el proyecto `omuawzpstpixojtqmpsm` en Supabase → SQL Editor.
+2. Ejecutá `supabase/migrations/001_initial.sql`. Crea perfiles, clientes, pedidos, actividad, secuencia para códigos PIR, bucket privado de imágenes y reglas RLS.
+3. En Authentication → Sign In / Providers, deshabilitá los registros públicos. En Authentication → Users, creá una cuenta para cada integrante autorizado.
+4. Para habilitar cada cuenta, copiá su UUID de Authentication → Users y ejecutá en SQL Editor:
+
+   ```sql
+   insert into public.profiles(id, display_name, role)
+   values ('UUID_DEL_USUARIO', 'Nombre', 'admin');
+   ```
+
+   Repetí el paso para cada integrante. Sin un perfil autorizado, RLS bloquea la lectura y escritura.
+5. En Authentication → URL Configuration, configurá como Site URL `https://esanchez18.github.io/Gestor-de-pedidos/` y agregá esa misma dirección a Redirect URLs. Agregá también `http://localhost:5173/` para desarrollo local.
+
+La clave pública de frontend no da acceso por sí sola: las tablas y Storage están protegidos por RLS. Nunca copies una clave `service_role`/`secret` al navegador.
 
 ## Comandos
 
 ```sh
 npm run dev       # desarrollo local
-npm run typecheck # chequeo de TypeScript
-npm run build     # aplicación estática en dist/
-npm run preview   # previsualizar el build local
+npm run typecheck # verificación de TypeScript
+npm run build     # build estático en dist/
+npm run preview   # previsualización local del build
 ```
 
-## Publicar gratis en GitHub Pages
+## GitHub Pages
 
-1. Creá un repositorio en GitHub y subí esta carpeta. No incluyas `node_modules` ni `dist`.
-2. En el repositorio, abrí Settings → Pages y seleccioná GitHub Actions como fuente.
-3. El workflow `.github/workflows/pages.yml` compila y publica el sitio cada vez que se actualiza la rama `main`.
-4. Cuando termine el workflow, GitHub mostrará el enlace gratuito `https://USUARIO.github.io/REPOSITORIO/`. La navegación por hash permite abrir y recargar sus pantallas directamente.
+El workflow `.github/workflows/pages.yml` compila y publica en cada push a `main`. En GitHub, abrí Settings → Secrets and variables → Actions → Variables y agregá:
 
-GitHub Pages incluye un subdominio `github.io` sin costo. También podés conectar un dominio propio si ya tenés uno; el registro de dominios personalizados suele tener costo.
+- `VITE_SUPABASE_ANON_KEY` = la clave pública anon/publishable del proyecto
 
-## Git inicial
+La clave pública queda incluida en el JavaScript público del sitio; la protección de los datos depende de Auth y RLS. No agregues claves secretas como variables `VITE_`.
 
-```sh
-git init
-git add .
-git commit -m "Crear Pirañalab Pedidos"
-git branch -M main
-git remote add origin https://github.com/USUARIO/REPOSITORIO.git
-git push -u origin main
-```
+En Settings → Pages, elegí GitHub Actions como fuente. La URL del sitio es `https://esanchez18.github.io/Gestor-de-pedidos/`.
 
-Después de subirlo, activá Pages como se describe arriba. Este proyecto no crea repositorios ni publica nada por sí solo.
+## Respaldo y privacidad
+
+Los pedidos son compartidos entre las cuentas que tengan perfil autorizado. Las imágenes quedan en un bucket privado y se muestran con enlaces temporales. Configurá respaldos de base de datos y de Storage desde Supabase y revisá las cuotas de tu plan a medida que aumente el uso. Las cotizaciones son importes cotizados; no se registran pagos.

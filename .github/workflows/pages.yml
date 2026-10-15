@@ -29,6 +29,9 @@ jobs:
         run: npm ci
       - name: Compilar
         run: npm run build
+        env:
+          VITE_SUPABASE_URL: https://omuawzpstpixojtqmpsm.supabase.co
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
       - name: Preparar GitHub Pages
         uses: actions/configure-pages@v5
       - name: Cargar artefacto
