@@ -19,8 +19,9 @@ La URL de este proyecto Supabase ya está en `.env.example`. Copiá en `.env.loc
 
 1. Abrí el proyecto `omuawzpstpixojtqmpsm` en Supabase → SQL Editor.
 2. Ejecutá `supabase/migrations/001_initial.sql`. Crea perfiles, clientes, pedidos, actividad, secuencia para códigos PIR, bucket privado de imágenes y reglas RLS.
-3. En Authentication → Sign In / Providers, deshabilitá los registros públicos. En Authentication → Users, creá una cuenta para cada integrante autorizado.
-4. Para habilitar cada cuenta, copiá su UUID de Authentication → Users y ejecutá en SQL Editor:
+3. Ejecutá `supabase/migrations/002_order_delivery.sql` para agregar dirección, localidad y costo de envío a los pedidos.
+4. En Authentication → Sign In / Providers, deshabilitá los registros públicos. En Authentication → Users, creá una cuenta para cada integrante autorizado.
+5. Para habilitar cada cuenta, copiá su UUID de Authentication → Users y ejecutá en SQL Editor:
 
    ```sql
    insert into public.profiles(id, display_name, role)
@@ -28,7 +29,7 @@ La URL de este proyecto Supabase ya está en `.env.example`. Copiá en `.env.loc
    ```
 
    Repetí el paso para cada integrante. Sin un perfil autorizado, RLS bloquea la lectura y escritura.
-5. En Authentication → URL Configuration, configurá como Site URL `https://esanchez18.github.io/Gestor-de-pedidos/` y agregá esa misma dirección a Redirect URLs. Agregá también `http://localhost:5173/` para desarrollo local.
+6. En Authentication → URL Configuration, configurá como Site URL `https://esanchez18.github.io/Gestor-de-pedidos/` y agregá esa misma dirección a Redirect URLs. Agregá también `http://localhost:5173/` para desarrollo local.
 
 La clave pública de frontend no da acceso por sí sola: las tablas y Storage están protegidos por RLS. Nunca copies una clave `service_role`/`secret` al navegador.
 
