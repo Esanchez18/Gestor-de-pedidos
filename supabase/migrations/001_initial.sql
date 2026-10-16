@@ -87,6 +87,8 @@ drop policy if exists "Admins manage orders" on public.orders;
 create policy "Admins manage orders" on public.orders for all to authenticated using(public.is_admin()) with check(public.is_admin());
 drop policy if exists "Admins read activity" on public.order_activity;
 create policy "Admins read activity" on public.order_activity for select to authenticated using(public.is_admin());
+drop policy if exists "Admins add activity" on public.order_activity;
+create policy "Admins add activity" on public.order_activity for insert to authenticated with check(public.is_admin());
 
 insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
 values('reference-images','reference-images',false,1048576,array['image/jpeg','image/png','image/webp'])
