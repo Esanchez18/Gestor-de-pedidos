@@ -60,7 +60,7 @@ begin
   if tg_op='INSERT' then
     insert into public.order_activity(order_id,event_type,description,user_id) values(new.id,'created','Se creó el pedido '||new.order_number||'.',auth.uid());
   elsif new.status is distinct from old.status then
-    insert into public.order_activity(order_id,event_type,description,user_id) values(new.id,case new.status when 'Finalizado' then 'completed' when 'Cancelado' then 'cancelled' when old.status='Cancelado' then 'reactivated' else 'status_changed' end,'Estado actualizado de '||old.status||' a '||new.status||'.',auth.uid());
+    insert into public.order_activity(order_id,event_type,description,user_id) values(new.id,case when new.status='Finalizado' then 'completed' when new.status='Cancelado' then 'cancelled' when old.status='Cancelado' then 'reactivated' else 'status_changed' end,'Estado actualizado de '||old.status||' a '||new.status||'.',auth.uid());
   elsif new.due_date is distinct from old.due_date then
     insert into public.order_activity(order_id,event_type,description,user_id) values(new.id,'due_date_changed','Se modificó la fecha de entrega.',auth.uid());
   else
