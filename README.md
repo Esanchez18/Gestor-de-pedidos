@@ -21,6 +21,7 @@ La URL de este proyecto Supabase ya está en `.env.example`. Copiá en `.env.loc
 2. Ejecutá `supabase/migrations/001_initial.sql`. Crea perfiles, clientes, pedidos, actividad, secuencia para códigos PIR, bucket privado de imágenes y reglas RLS.
 3. Ejecutá `supabase/migrations/002_order_delivery.sql` para agregar dirección, localidad y costo de envío a los pedidos.
 4. Ejecutá `supabase/migrations/003_catalog.sql` para crear categorías, productos, archivos privados y sus políticas RLS/Storage.
+   Después ejecutá `supabase/migrations/004_fixes.sql`: vuelve a asegurar las columnas de entrega, optimiza las políticas RLS y recarga el esquema de la API. Se puede ejecutar más de una vez.
 5. En Authentication → Sign In / Providers, deshabilitá los registros públicos. En Authentication → Users, creá una cuenta para cada integrante autorizado.
 6. Para habilitar cada cuenta, copiá su UUID de Authentication → Users y ejecutá en SQL Editor:
 

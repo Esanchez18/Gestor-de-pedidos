@@ -5,6 +5,10 @@ import type { CatalogCategory, CatalogPrivateFile, CatalogProduct, CatalogProduc
 import './catalog.css';
 
 function errorMessage(error: unknown) {
+  const code = error && typeof error === 'object' && 'code' in error ? String(error.code) : '';
+  if (code === '23505') return 'Ya existe un registro con ese nombre. Usá otro nombre.';
+  if (code === '23503') return 'No se puede completar: hay otros registros que dependen de este.';
+  if (code === 'PGRST204') return 'La base de datos no tiene las columnas que espera la app. Ejecutá supabase/migrations/004_fixes.sql en Supabase → SQL Editor.';
   if (error && typeof error === 'object' && 'message' in error) return String(error.message);
   return error instanceof Error ? error.message : 'Ocurrió un error al comunicarse con Supabase.';
 }
@@ -205,6 +209,10 @@ export default function CatalogPage() {
     if (!client) return;
     if (!product.is_published && !product.image_path) {
       setError('Agregá una imagen al producto antes de publicarlo.');
+      return;
+    }
+    if (!product.is_published && !product.description.trim()) {
+      setError('Agregá una descripción al producto antes de publicarlo.');
       return;
     }
     setBusy(true); setError(''); setNotice('');
