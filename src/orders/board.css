@@ -1,0 +1,56 @@
+.orders-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.orders-toolbar .searchbox{background:#fff;border:1px solid var(--line);border-radius:8px;flex:1;max-width:420px}
+.orders-toolbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.view-switch{display:inline-grid;grid-template-columns:1fr 1fr;background:#eef1f6;border-radius:8px;padding:3px}
+.view-switch button{display:flex;align-items:center;gap:6px;border:0;background:transparent;border-radius:6px;padding:7px 12px;font:600 11px inherit;color:#748094;cursor:pointer}
+.view-switch button.active{background:#fff;color:#3f6fd8;box-shadow:0 1px 3px #17253b1f}
+.toggle-cancelled{display:flex;align-items:center;gap:6px;font-size:11px;color:#748094;cursor:pointer;user-select:none}
+
+.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(260px,1fr);gap:14px;overflow-x:auto;padding:2px 2px 14px;align-items:start;scroll-snap-type:x proximity}
+.board-column{background:#f1f3f7;border:1px solid #e7eaf0;border-radius:12px;padding:12px 10px 10px;min-height:340px;display:flex;flex-direction:column;scroll-snap-align:start;transition:background .15s,border-color .15s}
+.board-column.drag-over{background:#e8efff;border-color:#9cb4ee}
+.board-column-head{display:flex;flex-direction:column;gap:3px;padding:0 4px 10px}
+.board-column-head>div{display:flex;align-items:center;gap:8px}
+.board-column-head h2{font:700 13px Manrope;color:#253044;margin:0}
+.board-column-head small{font-size:10px;color:#8b95a5;padding-left:16px}
+.board-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
+.board-count{margin-left:auto;background:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;color:#5d6a7e}
+.col-pendiente .board-dot{color:#d39a37}
+.col-en-proceso .board-dot{color:#4b77d4}
+.col-bloqueado .board-dot{color:#d15b56}
+.col-finalizado .board-dot{color:#1d9a6c}
+.col-cancelado .board-dot{color:#9aa3b0}
+
+.board-cards{display:flex;flex-direction:column;gap:8px;flex:1}
+.board-card{background:#fff;border:1px solid #e3e7ee;border-radius:9px;padding:10px 11px 9px;box-shadow:0 1px 2px #17253b12;cursor:grab;transition:box-shadow .15s,transform .15s,opacity .15s;position:relative}
+.board-card:hover{box-shadow:0 4px 12px #17253b1c;border-color:#d4dbe6}
+.board-card:focus-visible{outline:2px solid #4678e8;outline-offset:2px}
+.board-card:active{cursor:grabbing}
+.board-card.dragging{opacity:.4;transform:rotate(1.5deg)}
+.board-card.saving{opacity:.75}
+.col-bloqueado .board-card{border-left:3px solid #e08b87}
+.board-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
+.board-card-number{display:flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:#5480e2;letter-spacing:.2px}
+.board-card-number svg{color:#c3cad5;margin-left:-4px}
+.board-card h3{font:700 13px Manrope;color:#253044;margin:0 0 3px;line-height:1.3;overflow-wrap:anywhere}
+.board-qty{margin-left:6px;font-size:10px;font-weight:700;color:#7a8597;background:#f1f3f7;border-radius:5px;padding:1px 5px;vertical-align:1px}
+.board-customer{margin:0 0 9px;font-size:11px;color:#748094}
+.board-card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid #f0f2f5}
+.board-due{display:flex;align-items:center;gap:4px;font-size:10px;color:#7a8597;flex-wrap:wrap}
+.board-due.late{color:#c4504b;font-weight:600}
+.board-due b{background:#fff0ee;color:#c4504b;border-radius:4px;padding:1px 5px;font-size:9px}
+.board-price{font-size:11px;font-weight:700;color:#253044;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* Menú "Mover a": un select nativo transparente sobre el ícono (funciona con mouse, teclado y celular). */
+.board-move{position:relative;display:grid;place-items:center;width:26px;height:24px;border-radius:6px;color:#8b95a5;flex:none}
+.board-move:hover,.board-move:focus-within{background:#f1f3f7;color:#3f6fd8}
+.board-move select{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;font-size:16px}
+.board-empty{border:1.5px dashed #d5dbe5;border-radius:9px;padding:22px 10px;text-align:center;font-size:11px;color:#9aa4b3}
+.board-column.drag-over .board-empty{border-color:#7f9fe6;color:#3f6fd8}
+
+.status.bloqueado{background:#fff0ee;color:#c4504b}
+
+@media(max-width:760px){
+  .board{grid-auto-columns:82%;margin:0 -13px;padding:2px 13px 14px}
+  .orders-toolbar .searchbox{max-width:none;flex-basis:100%}
+}
