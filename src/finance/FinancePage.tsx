@@ -144,7 +144,7 @@ export default function FinancePage({ orders }: { orders: Order[] }) {
 
   return <>
     <div className="page-title">
-      <div><span className="eyebrow">ADMINISTRACIÓN</span><h1>Finanzas</h1><p>Ingresos, egresos y recuperación de lo invertido. Los pedidos finalizados se suman solos como ingresos.</p></div>
+      <div><span className="eyebrow">ADMINISTRACIÓN</span><h1>Finanzas</h1><p>Ingresos, egresos y recuperación de lo invertido. Los pedidos finalizados se suman solos como ingresos, también los archivados.</p></div>
       <button className="btn primary" onClick={() => setEditing(null)}><Plus size={17}/>Registrar movimiento</button>
     </div>
 
