@@ -190,7 +190,7 @@ export default function QuotePage({ orders, customers, signedImage }: { orders: 
       }
       const number = current?.number || 'PRES-BORRADOR';
       let logo: string | null = null;
-      try { logo = await urlToDataUrl(new URL('./brand/wordmark.png', document.baseURI).href); } catch { /* sin logo */ }
+      try { logo = await urlToDataUrl(new URL('./brand/pirana.svg', document.baseURI).href); } catch { /* sin logo */ }
       const blob = await buildQuotePdf({ ...draft, number }, biz, logo);
       const fileName = `Presupuesto ${number} - ${draft.client.name}.pdf`.replace(/[\\/:*?"<>|]/g, '');
       const file = new File([blob], fileName, { type: 'application/pdf' });

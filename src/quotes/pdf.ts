@@ -85,21 +85,20 @@ export async function buildQuotePdf(q: QuoteData, biz: BusinessSettings, logoDat
   const totals = quoteTotals(q);
 
   // ── Encabezado ──────────────────────────────────────────
-  const logoH = 22, logoW = 62;
-  fill(DARK); doc.roundedRect(M, y, logoW, logoH, 2.5, 2.5, 'F');
+  // Logo de la piraña (fondo blanco, igual que la hoja) + nombre del negocio al lado.
+  const logoH = 30;
+  let textX = M;
   if (logoDataUrl) {
-    const s = await compactImage(logoDataUrl, 900, '#111111');
-    const maxW = logoW - 8, maxH = logoH - 6;
-    const k = Math.min(maxW / s.w, maxH / s.h);
-    doc.addImage(s.dataUrl, 'JPEG', M + (logoW - s.w * k) / 2, y + (logoH - s.h * k) / 2, s.w * k, s.h * k);
-  } else {
-    font('bold', 16, ACCENT); doc.text(biz.name, M + logoW / 2, y + logoH / 2 + 2, { align: 'center' });
+    const s = await compactImage(logoDataUrl, 700, '#ffffff');
+    const k = logoH / s.h;
+    doc.addImage(s.dataUrl, 'JPEG', M - 2, y - 3, s.w * k, s.h * k);
+    textX = M - 2 + s.w * k + 2;
   }
+  font('bold', 20); doc.text(biz.name, textX, y + logoH / 2 - 1);
+  if (biz.tagline) { font('normal', 9, MUTED); doc.text(biz.tagline, textX, y + logoH / 2 + 5); }
 
   const right = W - M;
   let hy = y + 4;
-  font('bold', 13); doc.text(biz.name, right, hy, { align: 'right' }); hy += 5;
-  if (biz.tagline) { font('normal', 8.5, MUTED); doc.text(biz.tagline, right, hy, { align: 'right' }); hy += 4.5; }
   const contact = [
     biz.owner && `Titular: ${biz.owner}`,
     [biz.address, [biz.postalCode && `(${biz.postalCode})`, biz.city].filter(Boolean).join(' '), biz.province].filter(Boolean).join(', '),
