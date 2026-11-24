@@ -1,74 +1,100 @@
+/* ── Presupuesto: sistema de formulario unificado ───────────────────────────
+   Todos los controles miden 40px, usan la misma tipografía y el mismo radio,
+   y el espaciado vertical lo da el gap de cada tarjeta (sin márgenes sueltos). */
 .quote-alert{align-items:center;margin:-4px 0 16px}
 .quote-alert .icon-btn{margin-left:auto;color:inherit}
 .quote-warning{background:#fff8ec;border:1px solid #f6e3bf;color:#93651c;margin:-4px 0 16px}
 
-.quote-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+.quote-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
 .quote-form{display:grid;gap:16px;min-width:0}
-.quote-card{background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:18px 20px;min-width:0}
-.quote-card h2{font:700 15px Manrope;color:#253044;margin:2px 0 4px}
-.quote-card .field input,.quote-card .field select,.quote-card .field textarea{width:100%}
-.quote-card textarea{resize:vertical;font:inherit}
-.quote-hint{font-size:11px;color:#8b95a5;margin:10px 0 0;line-height:1.45}
+
+.quote-card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:22px 24px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.quote-card>*{margin:0}
+.quote-card h2{font:700 15px Manrope;color:#253044;margin:0;line-height:1.3}
+.quote-card>.eyebrow+h2{margin-top:-10px}
+
+/* Campos */
+.quote-card .field{margin:0;gap:6px;font-size:11px;font-weight:600;color:#69768a;min-width:0}
+.quote-card .field-grid{gap:16px 16px}
+.quote-card .field input,
+.quote-card .field select,
+.quote-card .field textarea{width:100%;height:40px;padding:0 12px;border:1px solid #dfe4eb;border-radius:8px;background:#fff;color:#253044;font-family:inherit;font-size:13px;font-weight:400;line-height:1.4}
+.quote-card .field textarea{height:auto;min-height:40px;padding:10px 12px;line-height:1.45;resize:vertical}
+.quote-card .field input::placeholder,.quote-card .field textarea::placeholder{color:#a3acb9}
+.quote-card .input-prefix{height:40px;border:1px solid #dfe4eb;border-radius:8px;background:#fff;padding-left:12px;gap:4px;font-size:13px;font-weight:400;color:#8b96a5}
+.quote-card .input-prefix input{height:38px;border:0;padding:0 12px 0 0;border-radius:0 8px 8px 0}
+.quote-card .btn{min-height:40px;height:40px;padding:0 16px;border-radius:8px;font-size:12px}
+.quote-card>.btn{align-self:flex-start}
+.quote-card input[type=checkbox]{width:16px;height:16px;margin:0;accent-color:#4678e8;flex:none}
+
+.quote-hint{font-size:11px;color:#8b95a5;line-height:1.5}
 .quote-hint a{color:#3f6fd8;font-weight:600}
+.quote-toggle{display:flex;align-items:center;gap:10px;font-size:13px;color:#46536a;cursor:pointer;min-height:24px}
 
-.quote-items{display:grid;gap:10px;margin:6px 0 12px}
-.quote-item{display:grid;grid-template-columns:70px minmax(0,1fr) 150px 32px;gap:10px;align-items:end;padding-bottom:10px;border-bottom:1px solid #f0f2f5}
-.quote-item .field{margin-top:0}
-.quote-remove{margin-bottom:3px}
-.quote-extra{margin-top:6px}
+/* Productos */
+.quote-items{display:grid;gap:14px}
+.quote-item{display:grid;grid-template-columns:84px minmax(0,1fr) 180px 40px;gap:12px;align-items:end;padding-bottom:14px;border-bottom:1px solid #f0f2f5}
+.quote-item:last-child{padding-bottom:0;border-bottom:0}
+.quote-remove{width:40px;height:40px;display:grid;place-items:center;border:1px solid #dfe4eb;border-radius:8px;background:#fff;margin:0}
+.quote-remove:disabled{opacity:.35;cursor:not-allowed}
 
-.quote-stl{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
-.quote-file{display:flex;align-items:center;gap:8px;border:1.5px dashed #cfd7e3;border-radius:8px;padding:9px 12px;font-size:12px;color:#46536a;cursor:pointer;max-width:100%;min-width:0}
+/* Imágenes */
+.quote-stl{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.quote-file{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border:1px dashed #c9d2df;border-radius:8px;background:#fafbfd;font-size:13px;color:#46536a;cursor:pointer;max-width:100%;min-width:0}
 .quote-file span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .quote-file input,.quote-add-photo input{display:none}
 .quote-file:hover,.quote-add-photo:hover{border-color:#7f9fe6;color:#3f6fd8}
-.quote-colors{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.quote-colors button{width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d5dbe5;cursor:pointer;padding:0}
+.quote-file-colors{height:40px}
+.quote-colors{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-height:40px;padding:0 12px;border:1px solid #dfe4eb;border-radius:8px;background:#fff}
+.quote-colors button{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d5dbe5;cursor:pointer;padding:0;flex:none}
 .quote-colors button.active{box-shadow:0 0 0 2px #3f6fd8}
-.quote-color-custom{width:26px;height:26px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 1px #d5dbe5;display:grid;place-items:center;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);cursor:pointer}
+.quote-color-custom{width:22px;height:22px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 1px #d5dbe5;display:grid;place-items:center;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);cursor:pointer;flex:none}
 .quote-color-custom input{opacity:0;width:100%;height:100%;cursor:pointer}
+.quote-colors.muted{opacity:.4}
+.quote-angles{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:12px;color:#46536a}
+.quote-angles>span{font-weight:600;color:#69768a;font-size:11px}
+.quote-angles label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.quote-palette{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.quote-swatch{display:inline-block;width:16px;height:16px;border-radius:50%;box-shadow:0 0 0 1px #d5dbe5}
 
-.quote-images{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
-.quote-images figure{margin:0;border:1px solid #e3e7ee;border-radius:8px;overflow:hidden;background:#f4f6fa}
+.quote-images{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.quote-images figure{margin:0;border:1px solid #e3e7ee;border-radius:8px;overflow:hidden;background:#f4f6fa;display:flex;flex-direction:column}
 .quote-images figure.off{opacity:.45}
 .quote-images img{display:block;width:100%;aspect-ratio:9/7;object-fit:contain;background:#f4f6fa}
-.quote-images figcaption{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:4px;padding:6px;background:#fff;font-size:10px;color:#69768a}
-.quote-images figcaption label{display:flex;align-items:center;gap:3px}
-.quote-img-label{border:0;font:inherit;color:#46536a;min-width:0;padding:2px 4px;border-radius:4px}
+.quote-images figcaption{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px;padding:6px 8px;background:#fff;font-size:11px;color:#69768a;border-top:1px solid #eef1f5}
+.quote-images figcaption label{display:flex;align-items:center;gap:4px}
+.quote-images figcaption .icon-btn{width:26px;height:26px}
+.quote-img-label{border:0;font:inherit;font-size:11px;color:#46536a;min-width:0;padding:3px 4px;border-radius:4px;background:transparent}
 .quote-img-label:focus{outline:1px solid #9cb4ee}
-.quote-add-photo{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:150px;border:1.5px dashed #cfd7e3;border-radius:8px;font-size:11px;color:#69768a;cursor:pointer}
+.quote-add-photo{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:160px;border:1px dashed #c9d2df;border-radius:8px;background:#fafbfd;font-size:12px;color:#69768a;cursor:pointer}
 
-.quote-toggle{display:flex;align-items:center;gap:8px;font-size:12px;color:#46536a;margin:14px 0 2px;cursor:pointer}
-
-.quote-summary{position:sticky;top:20px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:18px;display:grid;gap:9px}
+/* Resumen */
+.quote-summary{position:sticky;top:20px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:20px;display:grid;gap:10px}
 .quote-sum-row{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#748094}
 .quote-sum-row b{color:#253044;font-variant-numeric:tabular-nums}
-.quote-sum-total{display:flex;justify-content:space-between;align-items:center;background:#f3f6c4;border-radius:8px;padding:10px 12px;margin:4px 0}
+.quote-sum-total{display:flex;justify-content:space-between;align-items:center;background:#f3f6c4;border-radius:8px;padding:12px 14px;margin:2px 0}
 .quote-sum-total span{font-weight:700;color:#253044;font-size:12px}
 .quote-sum-total strong{font:800 18px Manrope;color:#253044;font-variant-numeric:tabular-nums}
-.quote-summary .btn{justify-content:center}
+.quote-summary .btn{justify-content:center;min-height:40px;border-radius:8px}
+.quote-summary .btn.primary{margin-top:6px}
 .spin{animation:quote-spin 1s linear infinite}
 @keyframes quote-spin{to{transform:rotate(360deg)}}
 
 .business-form{margin-top:18px}
-.business-form .alert{margin-top:12px}
+.calc-own-price{display:block;text-align:center;font-size:11px;margin-top:10px}
 
 @media(max-width:1000px){
   .quote-layout{grid-template-columns:minmax(0,1fr)}
   .quote-summary{position:static}
 }
 @media(max-width:620px){
-  .quote-item{grid-template-columns:64px minmax(0,1fr) 32px}
+  .quote-card{padding:18px 16px;gap:14px}
+  .quote-card .field-grid{grid-template-columns:1fr;gap:14px}
+  .quote-item{grid-template-columns:84px minmax(0,1fr) 40px}
   .quote-desc{grid-column:1/-1;grid-row:1}
-  .quote-qty{grid-row:2}
-  .quote-price{grid-row:2}
-  .quote-remove{grid-row:2}
+  .quote-qty,.quote-price,.quote-remove{grid-row:2}
+  .quote-stl{align-items:stretch}
+  .quote-stl>*{width:100%}
+  .quote-colors{justify-content:space-between}
+  .quote-stl .btn{width:100%}
 }
-.calc-own-price{display:block;text-align:center;font-size:11px;margin-top:10px}
-.quote-angles{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:12px;font-size:11px;color:#46536a}
-.quote-angles>span{font-weight:600;color:#69768a}
-.quote-angles label{display:flex;align-items:center;gap:4px;cursor:pointer}
-.quote-file-colors{margin:0}
-.quote-colors.muted{opacity:.4}
-.quote-palette{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.quote-swatch{display:inline-block;width:16px;height:16px;border-radius:50%;box-shadow:0 0 0 1px #d5dbe5}

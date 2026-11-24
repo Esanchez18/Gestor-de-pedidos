@@ -241,13 +241,13 @@ export default function QuotePage({ orders, customers, signedImage }: { orders: 
           <div className="quote-items">
             {items.map((it, i) => <div className="quote-item" key={i}>
               <label className="field quote-qty">Cant.<input inputMode="numeric" value={it.qty} onChange={e => updateItem(i, { qty: e.target.value })}/></label>
-              <label className="field quote-desc">Descripción<textarea rows={2} value={it.description} onChange={e => updateItem(i, { description: e.target.value })} placeholder="Ej.: Trofeo personalizado 15 cm, color dorado"/></label>
+              <label className="field quote-desc">Descripción<textarea rows={1} value={it.description} onChange={e => updateItem(i, { description: e.target.value })} placeholder="Ej.: Trofeo personalizado 15 cm, color dorado"/></label>
               <label className="field quote-price">Precio unitario<span className="input-prefix"><span>$</span><input inputMode="decimal" value={it.unitPrice} onChange={e => updateItem(i, { unitPrice: e.target.value })} placeholder="0,00"/></span></label>
               <button type="button" className="icon-btn danger-icon quote-remove" title="Quitar ítem" disabled={items.length === 1} onClick={() => setItems(list => list.filter((_, j) => j !== i))}><Trash2 size={15}/></button>
             </div>)}
           </div>
           <button type="button" className="btn secondary" onClick={() => setItems(list => [...list, { qty: '1', description: '', unitPrice: '' }])}><Plus size={15}/>Agregar ítem</button>
-          <div className="field-grid quote-extra">
+          <div className="field-grid">
             <label className="field">Envío<span className="input-prefix"><span>$</span><input inputMode="decimal" value={shipping} onChange={e => setShipping(e.target.value)} placeholder="0,00"/></span></label>
             <label className="field">IVA %<input inputMode="decimal" value={ivaPercent} onChange={e => setIvaPercent(e.target.value)}/></label>
           </div>
