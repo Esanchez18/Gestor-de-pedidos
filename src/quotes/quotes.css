@@ -68,3 +68,7 @@
 .quote-angles{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:12px;font-size:11px;color:#46536a}
 .quote-angles>span{font-weight:600;color:#69768a}
 .quote-angles label{display:flex;align-items:center;gap:4px;cursor:pointer}
+.quote-file-colors{margin:0}
+.quote-colors.muted{opacity:.4}
+.quote-palette{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.quote-swatch{display:inline-block;width:16px;height:16px;border-radius:50%;box-shadow:0 0 0 1px #d5dbe5}

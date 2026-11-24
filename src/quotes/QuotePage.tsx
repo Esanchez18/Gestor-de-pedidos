@@ -62,6 +62,8 @@ export default function QuotePage({ orders, customers, signedImage }: { orders: 
   const [stlFile, setStlFile] = useState<File | null>(null);
   const [viewChoice, setViewChoice] = useState<boolean[]>(() => [true, true, true, true, false, true]);
   const [stlColor, setStlColor] = useState('#c9a227');
+  const [useFileColors, setUseFileColors] = useState(true);
+  const [fileColors, setFileColors] = useState<{ has: boolean; palette: string[] } | null>(null);
   const [rendering, setRendering] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -135,7 +137,8 @@ export default function QuotePage({ orders, customers, signedImage }: { orders: 
     try {
       const { renderModel } = await import('./stlRender');
       if (!viewChoice.some(Boolean)) { setError('Elegí al menos un ángulo.'); return; }
-      const result = await renderModel(stlFile, stlColor);
+      const result = await renderModel(stlFile, stlColor, { useFileColors });
+      setFileColors(/\.3mf$/i.test(stlFile.name) ? { has: result.hasFileColors, palette: result.palette } : null);
       const picked = result.views.filter((_, i) => viewChoice[i] ?? true);
       setImages(list => [
         ...list.filter(i => !i.id.startsWith('stl-') && !i.id.startsWith('slicer-')),
@@ -264,13 +267,17 @@ export default function QuotePage({ orders, customers, signedImage }: { orders: 
         <section className="quote-card">
           <h2>Imágenes</h2>
           <div className="quote-stl">
-            <label className="quote-file"><Box size={18}/><span>{stlFile ? stlFile.name : 'Elegir archivo STL o 3MF'}</span><input type="file" onChange={e => { const f = e.target.files?.[0] || null; if (f && !/\.(stl|3mf)$/i.test(f.name)) { setError(`«${f.name}» no es un archivo 3D. Elegí un .stl o .3mf.`); e.target.value = ''; return; } setError(''); setStlFile(f); }}/></label>
-            <div className="quote-colors" role="radiogroup" aria-label="Color del modelo">
+            <label className="quote-file"><Box size={18}/><span>{stlFile ? stlFile.name : 'Elegir archivo STL o 3MF'}</span><input type="file" onChange={e => { const f = e.target.files?.[0] || null; if (f && !/\.(stl|3mf)$/i.test(f.name)) { setError(`«${f.name}» no es un archivo 3D. Elegí un .stl o .3mf.`); e.target.value = ''; return; } setError(''); setStlFile(f); setFileColors(null); }}/></label>
+            {stlFile && /\.3mf$/i.test(stlFile.name) && <label className="quote-toggle quote-file-colors"><input type="checkbox" checked={useFileColors} onChange={e => setUseFileColors(e.target.checked)}/>Usar los colores del archivo</label>}
+            <div className={`quote-colors ${stlFile && /\.3mf$/i.test(stlFile.name) && useFileColors ? 'muted' : ''}`} role="radiogroup" aria-label="Color del modelo" title={stlFile && /\.3mf$/i.test(stlFile.name) && useFileColors ? 'Se usa solo si el 3MF no trae colores' : undefined}>
               {COLORS.map(c => <button type="button" key={c.hex} role="radio" aria-checked={stlColor === c.hex} title={c.name} className={stlColor === c.hex ? 'active' : ''} style={{ background: c.hex }} onClick={() => { setStlColor(c.hex); if (!colorName) setColorName(c.name); }}/>)}
               <label className="quote-color-custom" title="Otro color"><input type="color" value={stlColor} onChange={e => setStlColor(e.target.value)}/></label>
             </div>
             <button type="button" className="btn primary" disabled={!stlFile || rendering} onClick={() => void renderViews()}>{rendering ? <><Loader2 size={15} className="spin"/>Generando…</> : 'Generar vistas'}</button>
           </div>
+          {fileColors && useFileColors && (fileColors.has
+            ? <p className="quote-hint quote-palette">Colores del archivo: {fileColors.palette.map(c => <span key={c} className="quote-swatch" style={{ background: c }} title={c}/>)}</p>
+            : <p className="quote-hint">Este 3MF no trae colores asignados: se usó el color elegido.</p>)}
           <div className="quote-angles" role="group" aria-label="Ángulos a generar"><span>Ángulos:</span>{['Perspectiva frontal', 'Perspectiva posterior', 'Frente', 'Lateral', 'Atrás', 'Superior'].map((name, i) => <label key={name}><input type="checkbox" checked={viewChoice[i]} onChange={e => setViewChoice(v => v.map((x, j) => j === i ? e.target.checked : x))}/>{name}</label>)}</div>
           <p className="quote-hint">Subí el .stl o el .3mf (Bambu Studio, OrcaSlicer, PrusaSlicer…) desde tu computadora o celular. Con un link de Drive no funciona: el navegador no puede leerlo. Si el 3MF trae la vista previa del laminador, aparece abajo para que la incluyas si querés.</p>
           <div className="quote-images">

@@ -4,6 +4,8 @@ export interface ModelRenders {
   views: { label: string; dataUrl: string }[];
   size: { x: number; y: number; z: number }; // mm
   thumbnails: { name: string; dataUrl: string }[]; // vistas previas del laminador (solo 3MF)
+  hasFileColors: boolean; // el 3MF trae colores propios
+  palette: string[];      // colores de filamento usados
 }
 
 export const MODEL_VIEWS: { label: string; dir: [number, number, number] }[] = [
@@ -17,15 +19,17 @@ export const MODEL_VIEWS: { label: string; dir: [number, number, number] }[] = [
 
 export const isModelFile = (name: string) => /\.(stl|3mf)$/i.test(name);
 
-export async function renderModel(file: File, color: string, width = 900, height = 700): Promise<ModelRenders> {
+export async function renderModel(file: File, color: string, options: { useFileColors?: boolean } = {}, width = 900, height = 700): Promise<ModelRenders> {
   const THREE = await import('three');
   const buffer = await file.arrayBuffer();
   let geometry: import('three').BufferGeometry;
   let thumbnails: ModelRenders['thumbnails'] = [];
+  let hasFileColors = false;
+  let palette: string[] = [];
   if (/\.3mf$/i.test(file.name)) {
     const { parse3mf } = await import('./model3mf');
     const parsed = await parse3mf(buffer);
-    geometry = parsed.geometry; thumbnails = parsed.thumbnails;
+    geometry = parsed.geometry; thumbnails = parsed.thumbnails; hasFileColors = parsed.hasColors; palette = parsed.palette;
   } else {
     const { STLLoader } = await import('three/examples/jsm/loaders/STLLoader.js');
     try {
@@ -54,7 +58,9 @@ export async function renderModel(file: File, color: string, width = 900, height
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#f4f6fa');
-  const material = new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: 0.55, metalness: 0.08, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+  const fileColors = hasFileColors && options.useFileColors !== false;
+  if (!fileColors) geometry.deleteAttribute('color');
+  const material = new THREE.MeshStandardMaterial({ color: fileColors ? '#ffffff' : new THREE.Color(color), vertexColors: fileColors, roughness: 0.55, metalness: 0.08, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
 
@@ -62,8 +68,8 @@ export async function renderModel(file: File, color: string, width = 900, height
   // En modelos muy pesados se omite para no trabar el navegador.
   let edges: import('three').LineSegments | null = null;
   if (geometry.attributes.position.count / 3 <= 400_000) {
-    const edgeColor = new THREE.Color(color).multiplyScalar(0.3);
-    edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 35), new THREE.LineBasicMaterial({ color: edgeColor, transparent: true, opacity: 0.85 }));
+    const edgeColor = fileColors ? new THREE.Color('#1d2533') : new THREE.Color(color).multiplyScalar(0.3);
+    edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 35), new THREE.LineBasicMaterial({ color: edgeColor, transparent: true, opacity: fileColors ? 0.45 : 0.85 }));
     scene.add(edges);
   }
 
@@ -102,5 +108,5 @@ export async function renderModel(file: File, color: string, width = 900, height
 
   geometry.dispose(); material.dispose(); edges?.geometry.dispose(); renderer.dispose();
   renderer.forceContextLoss?.();
-  return { views, size: { x: size.x, y: size.y, z: size.z }, thumbnails };
+  return { views, size: { x: size.x, y: size.y, z: size.z }, thumbnails, hasFileColors, palette };
 }
