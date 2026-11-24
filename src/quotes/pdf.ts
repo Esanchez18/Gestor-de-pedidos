@@ -222,10 +222,10 @@ export async function buildQuotePdf(q: QuoteData, biz: BusinessSettings, logoDat
 
   // ── Imágenes del producto ───────────────────────────────
   if (q.images.length) {
-    const perRow = q.images.length === 1 ? 1 : 2;
+    const perRow = q.images.length === 1 ? 1 : q.images.length >= 5 ? 3 : 2;
     const gap = 6;
     const cellW = (CW - gap * (perRow - 1)) / perRow;
-    const cellH = perRow === 1 ? 95 : 62;
+    const cellH = perRow === 1 ? 95 : perRow === 3 ? 44 : 62;
     ensure(cellH + 14);
     font('bold', 7.5, MUTED); doc.text('IMÁGENES DEL PRODUCTO', M, y); y += 3;
     for (let i = 0; i < q.images.length; i++) {

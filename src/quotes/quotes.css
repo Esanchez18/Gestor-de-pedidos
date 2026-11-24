@@ -65,3 +65,6 @@
   .quote-remove{grid-row:2}
 }
 .calc-own-price{display:block;text-align:center;font-size:11px;margin-top:10px}
+.quote-angles{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:12px;font-size:11px;color:#46536a}
+.quote-angles>span{font-weight:600;color:#69768a}
+.quote-angles label{display:flex;align-items:center;gap:4px;cursor:pointer}

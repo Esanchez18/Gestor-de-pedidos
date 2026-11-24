@@ -1,27 +1,40 @@
-// Genera capturas de un STL en el navegador (three.js se carga solo cuando se usa).
-export interface StlRenders {
+// Genera capturas de un modelo 3D (STL o 3MF) desde varios ángulos, en el navegador.
+// three.js se carga solo cuando se usa.
+export interface ModelRenders {
   views: { label: string; dataUrl: string }[];
   size: { x: number; y: number; z: number }; // mm
+  thumbnails: { name: string; dataUrl: string }[]; // vistas previas del laminador (solo 3MF)
 }
 
-const VIEWS: { label: string; dir: [number, number, number] }[] = [
-  { label: 'Perspectiva', dir: [1.1, -1.35, 0.95] },
+export const MODEL_VIEWS: { label: string; dir: [number, number, number] }[] = [
+  { label: 'Perspectiva frontal', dir: [1.1, -1.35, 0.95] },
+  { label: 'Perspectiva posterior', dir: [-1.1, 1.35, 0.95] },
   { label: 'Frente', dir: [0, -1, 0] },
+  { label: 'Lateral', dir: [1, 0, 0] },
+  { label: 'Atrás', dir: [0, 1, 0] },
   { label: 'Superior', dir: [0, 0, 1] },
 ];
 
-export async function renderStl(file: File, color: string, width = 900, height = 700): Promise<StlRenders> {
-  const THREE = await import('three');
-  const { STLLoader } = await import('three/examples/jsm/loaders/STLLoader.js');
+export const isModelFile = (name: string) => /\.(stl|3mf)$/i.test(name);
 
+export async function renderModel(file: File, color: string, width = 900, height = 700): Promise<ModelRenders> {
+  const THREE = await import('three');
   const buffer = await file.arrayBuffer();
   let geometry: import('three').BufferGeometry;
-  try {
-    geometry = new STLLoader().parse(buffer);
-  } catch {
-    throw new Error('No se pudo leer el archivo. Verificá que sea un .stl válido.');
+  let thumbnails: ModelRenders['thumbnails'] = [];
+  if (/\.3mf$/i.test(file.name)) {
+    const { parse3mf } = await import('./model3mf');
+    const parsed = await parse3mf(buffer);
+    geometry = parsed.geometry; thumbnails = parsed.thumbnails;
+  } else {
+    const { STLLoader } = await import('three/examples/jsm/loaders/STLLoader.js');
+    try {
+      geometry = new STLLoader().parse(buffer);
+    } catch {
+      throw new Error('No se pudo leer el archivo. Verificá que sea un .stl válido.');
+    }
   }
-  if (!geometry.attributes.position || geometry.attributes.position.count === 0) throw new Error('El archivo STL está vacío.');
+  if (!geometry.attributes.position || geometry.attributes.position.count === 0) throw new Error('El archivo 3D está vacío.');
 
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();
@@ -41,9 +54,18 @@ export async function renderStl(file: File, color: string, width = 900, height =
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#f4f6fa');
-  const material = new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: 0.55, metalness: 0.08 });
+  const material = new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: 0.55, metalness: 0.08, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
+
+  // Contorno fino en las aristas marcadas (ayuda a leer la forma en vistas planas).
+  // En modelos muy pesados se omite para no trabar el navegador.
+  let edges: import('three').LineSegments | null = null;
+  if (geometry.attributes.position.count / 3 <= 400_000) {
+    const edgeColor = new THREE.Color(color).multiplyScalar(0.3);
+    edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 35), new THREE.LineBasicMaterial({ color: edgeColor, transparent: true, opacity: 0.85 }));
+    scene.add(edges);
+  }
 
   scene.add(new THREE.HemisphereLight('#ffffff', '#b9c2d0', 1.4));
   const key = new THREE.DirectionalLight('#ffffff', 2.2); key.position.set(radius * 2, -radius * 2.5, radius * 3); scene.add(key);
@@ -58,7 +80,7 @@ export async function renderStl(file: File, color: string, width = 900, height =
   const half = size.clone().multiplyScalar(0.5);
   for (const sx of [-1, 1]) for (const sy of [-1, 1]) for (const sz of [-1, 1]) corners.push(new THREE.Vector3(sx * half.x, sy * half.y, sz * half.z));
 
-  const views = VIEWS.map(({ label, dir }) => {
+  const views = MODEL_VIEWS.map(({ label, dir }) => {
     const d = new THREE.Vector3(...dir).normalize().multiplyScalar(radius * 3);
     camera.position.copy(d);
     // Vista superior: el "arriba" de la imagen es el fondo de la pieza (+Y), no Z (los STL suelen venir con Z hacia arriba).
@@ -78,7 +100,7 @@ export async function renderStl(file: File, color: string, width = 900, height =
     return { label, dataUrl: renderer.domElement.toDataURL('image/jpeg', 0.9) };
   });
 
-  geometry.dispose(); material.dispose(); renderer.dispose();
+  geometry.dispose(); material.dispose(); edges?.geometry.dispose(); renderer.dispose();
   renderer.forceContextLoss?.();
-  return { views, size: { x: size.x, y: size.y, z: size.z } };
+  return { views, size: { x: size.x, y: size.y, z: size.z }, thumbnails };
 }
