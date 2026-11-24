@@ -38,6 +38,16 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
+  # La publicación va en un job aparte (como en la plantilla oficial de GitHub):
+  # el artefacto recién está disponible cuando termina el job que lo subió.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Publicar
         id: deployment
         uses: actions/deploy-pages@v4
